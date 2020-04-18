@@ -37,6 +37,8 @@ class LunchController extends AbstractController
         }
         // End Get Recipes with List of Ingredients
 
+        dd($availableRecipes);
+
         return $this->json(['recipes' => $availableRecipes]);
     }
 }

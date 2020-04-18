@@ -26,11 +26,11 @@ class Ingredient
         }
 
         // Set Unfresh Level
-        $bestBefore = Carbon::createFromFormat('Y-m-d', $this->bestBefore);
-        $dayDiff    = $bestBefore->diffInDays($this->currentDate);
-
         $this->unfreshLevel = 0;
         if($this->isPassBestBefore()){
+            $bestBefore = Carbon::createFromFormat('Y-m-d', $this->bestBefore);
+            $dayDiff    = $bestBefore->diffInDays($this->currentDate);
+
             $this->unfreshLevel = $dayDiff;
         }
         // End Set Unfresh Level
