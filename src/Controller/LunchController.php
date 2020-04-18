@@ -14,12 +14,12 @@ class LunchController extends AbstractController
      */
     public function index()
     {
-        // $ingredient = new Ingredient;
+        // Load External JSON Files
+        $directory      = $this->getParameter('kernel.project_dir');
 
-        // $test = $ingredient->test();
-        // dump(__DIR__);
-
-        $ingredients = json_decode(file_get_contents($this->getParameter('kernel.project_dir') . '/config/files/ingredients.json'));
+        $ingredients    = json_decode(file_get_contents($directory . '/config/files/ingredients.json'));
+        $recipes        = json_decode(file_get_contents($directory . '/config/files/recipes.json'));
+        // End Load External JSON Files
 
         dump($ingredients);
 
