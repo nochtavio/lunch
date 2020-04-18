@@ -11,7 +11,7 @@ class Recipe
     public $title;
     public $ingredients;
     public $availableIngredients;
-    public $freshLevel;
+    public $unfreshLevel;
 
     public function __construct($title, $ingredients)
     {
@@ -29,15 +29,19 @@ class Recipe
         if($currentDate == null){
             $currentDate = Carbon::now()->format('Y-m-d');
         }
-
+        
         $this->availableIngredients = [];
+        $this->unfreshLevel         = 0;
+
         foreach ($this->ingredients as $key => $ingredient) {
             foreach ($ingredientsLists as $key2 => $ingredientList) {
                 if($ingredient == $ingredientList->{'title'}){
                     $ingredientEntity = new Ingredient($ingredientList->{'title'}, $ingredientList->{'best-before'}, $ingredientList->{'use-by'}, $currentDate);
 
                     if($ingredientEntity->isCanBeUsed($currentDate)){
-                        $this->availableIngredients[] = (array) $ingredientEntity;
+                        $this->availableIngredients[]   = (array) $ingredientEntity;
+
+                        $this->setUnfreshLevel($ingredientEntity->unfreshLevel);
 
                         /** remove used ingredients from the list */
                         unset($ingredientsLists[$key2]);
@@ -51,6 +55,13 @@ class Recipe
         }
     }
 
+    public function setUnfreshLevel($unfreshLevel)
+    {
+        if($this->unfreshLevel < $unfreshLevel){
+            $this->unfreshLevel = $unfreshLevel;
+        }
+    }
+
     public function isRecipeAvailable()
     {
         return count($this->ingredients) == count($this->availableIngredients);
@@ -60,7 +71,8 @@ class Recipe
     {
         return [
             'title'         => $this->title,
-            'ingredients'   => $this->ingredients
+            'ingredients'   => $this->ingredients,
+            'unfresh_level' => $this->unfreshLevel
         ];
     }
 }

@@ -44,7 +44,7 @@ class IngredientTest extends TestCase
         $this->assertTrue($canBeUsed);
     }
 
-    public function testSetFreshDateLevelWithCanBeUsedIngredient()
+    public function testUnfreshDateLevelWithCanBeUsedIngredient()
     {
         /** test set can be used ingredient freshdate level */
 
@@ -56,10 +56,10 @@ class IngredientTest extends TestCase
 
         $ingredient = new Ingredient($title, $bestBefore, $usedBy, $today);
 
-        $this->assertTrue($ingredient->freshDateLevel == 5);
+        $this->assertTrue($ingredient->unfreshLevel == 0);
     }
 
-    public function testSetFreshDateLevelWithCannotBeUsedIngredient()
+    public function testUnfreshDateLevelWithCannotBeUsedIngredient()
     {
         /** test set cant be used ingredient freshdate level */
 
@@ -71,6 +71,6 @@ class IngredientTest extends TestCase
 
         $ingredient = new Ingredient($title, $bestBefore, $usedBy, $today);
 
-        $this->assertTrue($ingredient->freshDateLevel == -5);
+        $this->assertTrue($ingredient->unfreshLevel == 7);
     }
 }

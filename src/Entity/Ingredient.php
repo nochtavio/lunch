@@ -9,7 +9,7 @@ class Ingredient
     public $title;
     public $bestBefore;
     public $usedBy;
-    public $freshDateLevel;
+    public $unfreshLevel;
     
     private $currentDate;
 
@@ -25,16 +25,15 @@ class Ingredient
             $this->currentDate = Carbon::createFromFormat('Y-m-d', $currentDate);
         }
 
-        // Set Fresh Date Level
-        $usedBy     = Carbon::createFromFormat('Y-m-d', $this->usedBy);
-        $dayDiff    = $usedBy->diffInDays($this->currentDate);
+        // Set Unfresh Level
+        $bestBefore = Carbon::createFromFormat('Y-m-d', $this->bestBefore);
+        $dayDiff    = $bestBefore->diffInDays($this->currentDate);
 
-        if($this->isCanBeUsed()){
-            $this->freshDateLevel = $dayDiff;
-        }else{
-            $this->freshDateLevel = $dayDiff * -1;
+        $this->unfreshLevel = 0;
+        if($this->isPassBestBefore()){
+            $this->unfreshLevel = $dayDiff;
         }
-        // End Set Fresh Date Level
+        // End Set Unfresh Level
     }
 
     public function isCanBeUsed()
@@ -42,5 +41,12 @@ class Ingredient
         $usedBy = Carbon::createFromFormat('Y-m-d', $this->usedBy);
 
         return $usedBy->greaterThanOrEqualTo($this->currentDate);
+    }
+
+    public function isPassBestBefore()
+    {
+        $bestBefore = Carbon::createFromFormat('Y-m-d', $this->bestBefore);
+
+        return $this->currentDate->greaterThan($bestBefore);
     }
 }
