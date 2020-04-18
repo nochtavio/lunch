@@ -2,22 +2,27 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class LunchController
+use App\Entity\Ingredient;
+
+class LunchController extends AbstractController
 {
     /**
      *  @Route("/lunch", name="lunch_list")
      */
     public function index()
     {
-        $response = new Response();
-        $response->setContent(json_encode([
-            'data' => 123,
-        ]));
-        $response->headers->set('Content-Type', 'application/json');
+        // $ingredient = new Ingredient;
 
-        return $response;
+        // $test = $ingredient->test();
+        // dump(__DIR__);
+
+        $ingredients = json_decode(file_get_contents($this->getParameter('kernel.project_dir') . '/config/files/ingredients.json'));
+
+        dump($ingredients);
+
+        return $this->json(['data' => 'test']);
     }
 }
