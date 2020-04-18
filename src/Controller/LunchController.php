@@ -4,25 +4,39 @@ namespace App\Controller;
 
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 
-use App\Entity\Ingredient;
+use App\Entity\Recipe;
 
 class LunchController extends AbstractController
 {
     /**
      *  @Route("/lunch", name="lunch_list")
      */
-    public function index()
+    public function index(Request $request)
     {
+        $date = $request->query->get('date');
+        
         // Load External JSON Files
-        $directory      = $this->getParameter('kernel.project_dir');
+        $directory = $this->getParameter('kernel.project_dir');
 
-        $ingredients    = json_decode(file_get_contents($directory . '/config/files/ingredients.json'));
-        $recipes        = json_decode(file_get_contents($directory . '/config/files/recipes.json'));
+        $ingredientsFile    = json_decode(file_get_contents($directory . '/config/files/ingredients.json'));
+        $recipesFile        = json_decode(file_get_contents($directory . '/config/files/recipes.json'));
         // End Load External JSON Files
 
-        dump($ingredients);
+        // Get Recipes with List of Ingredients
+        $availableRecipes = [];
+        foreach ($recipesFile->recipes as $key => $recipe) {
+            $recipeEntity = new Recipe($recipe->title, $recipe->ingredients);
 
-        return $this->json(['data' => 'test']);
+            $recipeEntity->setIngredients($ingredientsFile->ingredients, $date);
+
+            if($recipeEntity->isRecipeAvailable()){
+                $availableRecipes[] = $recipeEntity->getRecipe();
+            }
+        }
+        // End Get Recipes with List of Ingredients
+
+        return $this->json(['recipes' => $availableRecipes]);
     }
 }

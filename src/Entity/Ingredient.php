@@ -9,28 +9,38 @@ class Ingredient
     public $title;
     public $bestBefore;
     public $usedBy;
+    public $freshDateLevel;
+    
+    private $currentDate;
 
-    public function __construct($title, $bestBefore, $usedBy)
+    public function __construct($title, $bestBefore, $usedBy, $currentDate = null)
     {
         $this->title        = $title;
         $this->bestBefore   = $bestBefore;
         $this->usedBy       = $usedBy;
-    }
-
-    public function isCanBeUsed($currentDate = null)
-    {
-        /**
-         *  $currentDate = can be filled with Y-m-d formatted date
-         */
 
         if($currentDate == null){
-            $currentDate = Carbon::now();
+            $this->currentDate = Carbon::now();
         }else{
-            $currentDate = Carbon::createFromFormat('Y-m-d', $currentDate);
+            $this->currentDate = Carbon::createFromFormat('Y-m-d', $currentDate);
         }
 
+        // Set Fresh Date Level
+        $usedBy     = Carbon::createFromFormat('Y-m-d', $this->usedBy);
+        $dayDiff    = $usedBy->diffInDays($this->currentDate);
+
+        if($this->isCanBeUsed()){
+            $this->freshDateLevel = $dayDiff;
+        }else{
+            $this->freshDateLevel = $dayDiff * -1;
+        }
+        // End Set Fresh Date Level
+    }
+
+    public function isCanBeUsed()
+    {
         $usedBy = Carbon::createFromFormat('Y-m-d', $this->usedBy);
 
-        return $usedBy->greaterThanOrEqualTo($currentDate);
+        return $usedBy->greaterThanOrEqualTo($this->currentDate);
     }
 }
