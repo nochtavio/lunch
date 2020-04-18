@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Carbon\Carbon;
+
 class Ingredient
 {
     public $title;
@@ -15,8 +17,20 @@ class Ingredient
         $this->usedBy       = $usedBy;
     }
 
-    public function isPastDate($date)
+    public function isCanBeUsed($currentDate = null)
     {
-        return true;
+        /**
+         *  $currentDate = can be filled with Y-m-d formatted date
+         */
+
+        if($currentDate == null){
+            $currentDate = Carbon::now();
+        }else{
+            $currentDate = Carbon::createFromFormat('Y-m-d', $currentDate);
+        }
+
+        $usedBy = Carbon::createFromFormat('Y-m-d', $this->usedBy);
+
+        return $usedBy->greaterThanOrEqualTo($currentDate);
     }
 }
