@@ -33,6 +33,19 @@ class LunchControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertTrue($validCount == 1);
-        
+    }
+
+    public function testLunchListSortingWithSaladInBottom()
+    {
+        /** test to check salad is sorted in the bottom of the result */
+
+        $client = static::createClient();
+
+        $client->request('GET', '/lunch?date=2019-03-07');
+
+        $content = json_decode($client->getResponse()->getContent());
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertTrue($content->recipes[count($content->recipes) - 1]->title == 'Salad');
     }
 }

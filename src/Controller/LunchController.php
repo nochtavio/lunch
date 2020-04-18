@@ -37,7 +37,11 @@ class LunchController extends AbstractController
         }
         // End Get Recipes with List of Ingredients
 
-        dd($availableRecipes);
+        // Sort By Unfresh Level
+        usort($availableRecipes, function($a, $b) {
+            return $a['unfresh_level'] <=> $b['unfresh_level'];
+        });
+        // End Sort By Unfresh Level
 
         return $this->json(['recipes' => $availableRecipes]);
     }
