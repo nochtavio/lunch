@@ -12,8 +12,12 @@ class LunchController
      */
     public function index()
     {
-        return new Response(
-            '<html><body>Hello</body></html>'
-        );
+        $response = new Response();
+        $response->setContent(json_encode([
+            'data' => 123,
+        ]));
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
     }
 }
