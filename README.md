@@ -1,4 +1,5 @@
 # Lunch API
+
 API to give you a list of recipes with available ingredients.
 
 ## Running the Application:
